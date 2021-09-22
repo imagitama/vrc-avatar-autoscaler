@@ -159,8 +159,12 @@ public class VRC_Avatar_AutoScaler : EditorWindow
             GameObject avatarGameObject = GetGameObjectFromVrcAvatarDescriptor(sourceVrcAvatarDescriptor);
 
             GameObject clonedGameObject = Instantiate(avatarGameObject, item.position, Quaternion.identity);
-            
+
+            clonedGameObject.name = item.gameObjectName;
+
             clonedGameObject.transform.localScale = item.scale;
+            VRCAvatarDescriptor descriptor = clonedGameObject.GetComponent<VRCAvatarDescriptor>();
+            descriptor.ViewPosition = item.viewPosition;
 
             PipelineManager pipelineManager = clonedGameObject.GetComponent<PipelineManager>();
             pipelineManager.blueprintId = item.blueprintId;
@@ -183,7 +187,9 @@ public class VRC_Avatar_AutoScaler : EditorWindow
             clonedAvatarDataItems.Add(new ClonedAvatarData() {
                 position = existingAvatarDescriptor.gameObject.transform.position,
                 scale = existingAvatarDescriptor.gameObject.transform.localScale,
-                blueprintId = pipelineManager.blueprintId
+                blueprintId = pipelineManager.blueprintId,
+                viewPosition = existingAvatarDescriptor.ViewPosition,
+                gameObjectName = existingAvatarDescriptor.gameObject.name
             });
         }
 
@@ -238,10 +244,17 @@ public class VRC_Avatar_AutoScaler : EditorWindow
 
             GameObject clonedGameObject = Instantiate(avatarGameObject, newPosition, Quaternion.identity);
 
+            NameAvatarGameObject(clonedGameObject, autoScalerInput.scaleAmount);
+
             ScaleAvatar(clonedGameObject, autoScalerInput.scaleAmount);
         });
 
         Debug.Log("Created scaled avatars");
+    }
+
+    void NameAvatarGameObject(GameObject gameObject, float scaleAmount) {
+        String newName = $" - {scaleAmount}";
+        gameObject.name = gameObject.name.Replace("(Clone)", newName);
     }
 
     void ScaleAvatar(GameObject gameObject, float scaleAmount) {
@@ -249,6 +262,13 @@ public class VRC_Avatar_AutoScaler : EditorWindow
         Vector3 newScale = currentScale * scaleAmount;
 
         gameObject.transform.localScale = newScale;
+
+        VRCAvatarDescriptor avatar = gameObject.GetComponent<VRCAvatarDescriptor>();
+        Vector3 newViewPosition = avatar.ViewPosition;
+        newViewPosition.y = newViewPosition.y * scaleAmount; // height
+        newViewPosition.z = newViewPosition.z * scaleAmount; // depth
+
+        avatar.ViewPosition = newViewPosition;
     }
 
     float GetPreviousScaleAmount(AutoScalerInput autoScalerInput, List<AutoScalerInput> autoScalerInputs) {
