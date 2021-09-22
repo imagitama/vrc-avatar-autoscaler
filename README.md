@@ -1,6 +1,11 @@
 # VRC Avatar AutoScaler
 
-A Unity plugin that scales your VRChat avatar to different sizes for easy uploading.
+A Unity plugin that scales your VRChat avatar to different sizes for easy uploading. It:
+
+- clones your avatar
+- scales the `GameObject` X times for each scale amount you want
+- moves the VRC viewpoint
+- updates each one whenever you change the source avatar 
 
 <img src="screenshots/screenshot_main.png" />
 
