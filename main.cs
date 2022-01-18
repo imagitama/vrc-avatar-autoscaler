@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 using UnityEditor.Animations;
 using VRC.SDKBase.Editor;
 using VRC.SDK3.Avatars.Components;
@@ -56,34 +57,55 @@ public class VRC_Avatar_AutoScaler : EditorWindow
         
         EditorGUILayout.Space();
         EditorGUILayout.Space();
-        
-        GUILayout.Label("Enter each of the sizes (float):", EditorStyles.wordWrappedLabel);
+    
+        if (sourceVrcAvatarDescriptor != null) {
+            if (GUILayout.Button("Detect Existing Sizes"))
+            {
+                DetectExistingSizes();
+            }
 
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
+            EditorGUI.BeginDisabledGroup(true);
+            GUILayout.Label("It searches for game objects with the same name but with the scale value at the end");
+            EditorGUI.EndDisabledGroup();
 
-        DrawScalesInputs();
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
+            GUILayout.Label("Enter each of the sizes (float):", EditorStyles.wordWrappedLabel);
 
-        // enablePublishingAvatars = GUILayout.Toggle(enablePublishingAvatars, "Publish avatars");
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
-        // EditorGUILayout.Space();
-        // EditorGUILayout.Space();
+            DrawScalesInputs();
 
-        if (GUILayout.Button("Create"))
-        {
-            CreateAvatars();
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+
+            // enablePublishingAvatars = GUILayout.Toggle(enablePublishingAvatars, "Publish avatars");
+
+            // EditorGUILayout.Space();
+            // EditorGUILayout.Space();
+
+            if (GUILayout.Button("Create", GUILayout.Width(100), GUILayout.Height(50)))
+            {
+                CreateAvatars();
+            }
+
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+
+            if (GUILayout.Button("Update", GUILayout.Width(100), GUILayout.Height(50)))
+            {
+                UpdateAvatars();
+            }
+
+            EditorGUI.BeginDisabledGroup(true);
+            GUILayout.Label("Note that it does NOT re-scale each avatar (delete the objects and Create)");
+            EditorGUI.EndDisabledGroup();
+
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
         }
-
-        if (GUILayout.Button("Update"))
-        {
-            UpdateAvatars();
-        }
-
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
 
         GUILayout.Label("Download new versions: https://github.com/imagitama/vrc-avatar-autoscaler");
 
@@ -92,6 +114,29 @@ public class VRC_Avatar_AutoScaler : EditorWindow
 
         GUILayout.Label("https://twitter.com/@HiPeanutBuddha");
         GUILayout.Label("Peanut#1756");
+    }
+
+    void DetectExistingSizes() {
+        string sourceObjectName = sourceVrcAvatarDescriptor.gameObject.name;
+
+        GameObject[] allRootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+
+        autoScalerInputs = new List<AutoScalerInput>();
+
+        foreach (GameObject rootGameObject in allRootGameObjects) {
+            string rootGameObjectName = rootGameObject.name;
+
+            if (rootGameObjectName.Contains(sourceObjectName)) {
+                string[] chunks = rootGameObjectName.Split(new string[] { " - " }, System.StringSplitOptions.None);
+
+                if (chunks.Length == 2) {
+                    string scaleValue = chunks[1];
+                    autoScalerInputs.Add(new AutoScalerInput() {
+                        scaleAmount = float.Parse(scaleValue)
+                    });
+                }
+            }
+        }
     }
 
     void DrawScalesInputs() {
