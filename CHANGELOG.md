@@ -1,3 +1,7 @@
+# 0.0.4
+
+- improve existing size detection
+
 # 0.0.3
 
 - detect existing sizes button
