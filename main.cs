@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -122,19 +123,22 @@ public class VRC_Avatar_AutoScaler : EditorWindow
         GameObject[] allRootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
 
         autoScalerInputs = new List<AutoScalerInput>();
+        Regex suffixPattern = new Regex(@"^ - ([\d,.]+)$");
 
         foreach (GameObject rootGameObject in allRootGameObjects) {
             string rootGameObjectName = rootGameObject.name;
 
-            if (rootGameObjectName.Contains(sourceObjectName)) {
-                string[] chunks = rootGameObjectName.Split(new string[] { " - " }, System.StringSplitOptions.None);
+            if (rootGameObjectName == sourceObjectName || !rootGameObjectName.StartsWith(sourceObjectName)) {
+                continue;
+            }
 
-                if (chunks.Length == 2) {
-                    string scaleValue = chunks[1];
-                    autoScalerInputs.Add(new AutoScalerInput() {
-                        scaleAmount = float.Parse(scaleValue)
-                    });
-                }
+            string remainingName = rootGameObjectName.Substring(sourceObjectName.Length);
+            var patternMatch = suffixPattern.Match(remainingName);
+            if (patternMatch.Success) {
+                string scaleValue = patternMatch.Groups[1].Value;
+                autoScalerInputs.Add(new AutoScalerInput() {
+                     scaleAmount = float.Parse(scaleValue)
+                });
             }
         }
     }
