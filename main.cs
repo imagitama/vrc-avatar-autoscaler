@@ -314,8 +314,9 @@ public class VRC_Avatar_AutoScaler : EditorWindow
 
         VRCAvatarDescriptor avatar = gameObject.GetComponent<VRCAvatarDescriptor>();
         Vector3 newViewPosition = avatar.ViewPosition;
-        newViewPosition.y = newViewPosition.y * scaleAmount; // height
-        newViewPosition.z = newViewPosition.z * scaleAmount; // depth
+        newViewPosition.x = (newViewPosition.x * scaleAmount) / currentScale.x; // asymmetric view position?
+        newViewPosition.y = (newViewPosition.y * scaleAmount) / currentScale.y; // height
+        newViewPosition.z = (newViewPosition.z * scaleAmount) / currentScale.z; // depth
 
         avatar.ViewPosition = newViewPosition;
     }
