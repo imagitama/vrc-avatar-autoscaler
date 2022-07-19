@@ -2,6 +2,7 @@
 
 - fixed view position scaling with avatars not at size 1,1,1 ([#2](https://github.com/imagitama/vrc-avatar-autoscaler/pull/2))
 - added undo entry ([#2](https://github.com/imagitama/vrc-avatar-autoscaler/pull/2))
+- removed keyboard shortcut
 
 # 0.0.4
 

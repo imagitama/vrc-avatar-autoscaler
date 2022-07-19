@@ -36,7 +36,7 @@ public class VRC_Avatar_AutoScaler : EditorWindow
       }
     };
 
-    [MenuItem("PeanutTools/VRC Avatar AutoScaler _%#T")]
+    [MenuItem("PeanutTools/VRC Avatar AutoScaler")]
     public static void ShowWindow()
     {
         var window = GetWindow<VRC_Avatar_AutoScaler>();
