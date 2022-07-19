@@ -297,7 +297,7 @@ public class VRC_Avatar_AutoScaler : EditorWindow
 
             ScaleAvatar(clonedGameObject, autoScalerInput.scaleAmount);
 
-			Undo.RegisterCreatedObjectUndo(clonedGameObject, "VRC Avatar AutoScaler");
+            Undo.RegisterCreatedObjectUndo(clonedGameObject, "VRC Avatar AutoScaler");
         });
 
         Debug.Log("Created scaled avatars");
